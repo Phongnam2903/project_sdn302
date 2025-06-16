@@ -1,0 +1,25 @@
+/* Login.css */
+
+.login-background {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-login {
+    width: 100%;
+    max-width: 500px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+
+/* .login-background {
+  min-height: 100vh;
+  background-image: url('/path/to/background.jpg');
+  background-size: cover;
+  background-position: center;
+} */
