@@ -1,12 +1,26 @@
-import { Form, Button, Row, Col } from "react-bootstrap";
+import { useState } from "react";
+import { Form, Button, Row, Col, Alert } from "react-bootstrap";
 
 const QuestionForm = ({ question, onChange, onSubmit }) => {
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit();
+
+    // Hiển thị thông báo
+    setShowSuccess(true);
+
+    // Ẩn sau 3 giây
+    setTimeout(() => setShowSuccess(false), 3000);
+  };
+
   const handleAnswerChange = (index, field, value) => {
     const updatedAnswers = question.answers.map((ans, i) => {
       if (i === index) {
         return { ...ans, [field]: field === "isCorrect" ? true : value };
       } else if (field === "isCorrect") {
-        return { ...ans, isCorrect: false }; // Chỉ một đáp án đúng
+        return { ...ans, isCorrect: false };
       }
       return ans;
     });
@@ -14,19 +28,29 @@ const QuestionForm = ({ question, onChange, onSubmit }) => {
   };
 
   const handleAddAnswer = () => {
-    if (question.answers.length >= 4) return; // Giới hạn 4 đáp án
+    if (question.answers.length >= 4) return;
     const newAnswers = [...question.answers, { text: "", isCorrect: false }];
     onChange({ target: { name: "answers", value: newAnswers } });
   };
 
   const handleRemoveAnswer = (index) => {
-    if (question.answers.length <= 1) return; // Tối thiểu 1 đáp án
+    if (question.answers.length <= 1) return;
     const newAnswers = question.answers.filter((_, i) => i !== index);
     onChange({ target: { name: "answers", value: newAnswers } });
   };
 
   return (
-    <Form>
+    <Form onSubmit={handleSubmit}>
+      {showSuccess && (
+        <Alert
+          variant="success"
+          onClose={() => setShowSuccess(false)}
+          dismissible
+        >
+          ✅ Câu hỏi đã được lưu thành công!
+        </Alert>
+      )}
+
       <Form.Group className="mb-3">
         <Form.Label>
           <strong>Câu hỏi</strong>
@@ -108,7 +132,7 @@ const QuestionForm = ({ question, onChange, onSubmit }) => {
         />
       </Form.Group>
 
-      <Button variant="primary" onClick={onSubmit}>
+      <Button variant="primary" type="submit">
         Lưu câu hỏi
       </Button>
     </Form>
