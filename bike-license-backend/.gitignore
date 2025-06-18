@@ -47,3 +47,6 @@ build/
 # MongoDB dumps (nếu có)
 dump/
 *.archive
+
+#images
+/uploads

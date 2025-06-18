@@ -1,43 +1,73 @@
 const express = require("express");
 const router = express.Router();
-const ExamHistory = require("../models/ExamHistory");
+const Exam = require("../models/Exam");
 const Question = require("../models/Question");
-const { auth } = require("../middleware/auth");
+const { auth, isAdmin } = require("../middleware/auth");
 
-router.post("/submit", auth, async (req, res) => {
-  const { answers } = req.body;
-  let score = 0;
-  const history = [];
+// POST /api/exams/random
+router.post("/random", auth, isAdmin, async (req, res) => {
+  try {
+    const { title, questionCount } = req.body;
 
-  for (const answer of answers) {
-    const question = await Question.findById(answer.questionId);
-    const correctIndex = question.answers.findIndex((a) => a.isCorrect);
-    if (answer.selectedIndex === correctIndex) score++;
+    if (!title || !questionCount || questionCount < 1) {
+      return res
+        .status(400)
+        .json({ error: "Thiếu thông tin hoặc số câu không hợp lệ" });
+    }
 
-    history.push({
-      questionId: question._id,
-      selectedAnswerIndex: answer.selectedIndex,
-      correctAnswerIndex: correctIndex,
+    // 1. Chọn 1 câu điểm liệt ngẫu nhiên
+    const fatalQuestion = await Question.aggregate([
+      {
+        $match: {
+          category: { $regex: /^điểm liệt$/i },
+        },
+      },
+      { $sample: { size: 1 } },
+    ]);
+
+    if (fatalQuestion.length === 0) {
+      return res
+        .status(400)
+        .json({ error: "Không có câu hỏi thuộc 'Điểm liệt'" });
+    }
+
+    // 2. Chọn các câu còn lại (không phải điểm liệt)
+    const normalQuestions = await Question.aggregate([
+      {
+        $match: {
+          category: { $not: { $regex: /^điểm liệt$/i } },
+          _id: { $nin: fatalQuestion.map((q) => q._id) },
+        },
+      },
+      { $sample: { size: questionCount - 1 } },
+    ]);
+
+    if (normalQuestions.length < questionCount - 1) {
+      return res
+        .status(400)
+        .json({ error: "Không đủ câu hỏi không thuộc 'Điểm liệt'" });
+    }
+
+    // 3. Tạo đề thi
+    const exam = await Exam.create({
+      title,
+      category: "Tổng hợp",
+      questions: [...fatalQuestion, ...normalQuestions].map((q) => q._id),
+      createdBy: req.user.id,
     });
+
+    res.status(201).json(exam);
+  } catch (err) {
+    console.error("Tạo đề ngẫu nhiên lỗi:", err);
+    res.status(500).json({ error: err.message });
   }
-
-  const passed = score >= 21;
-  const exam = await ExamHistory.create({
-    userId: req.user.id,
-    questions: history,
-    score,
-    passed,
-  });
-
-  res.json({ score, passed });
 });
 
-router.get("/history", auth, async (req, res) => {
+// GET /api/exams get all exams
+router.get("/", auth, async (req, res) => {
   try {
-    const history = await ExamHistory.find({ userId: req.user.id }).sort({
-      createdAt: -1,
-    });
-    res.json(history);
+    const exams = await Exam.find().populate("questions");
+    res.json(exams);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

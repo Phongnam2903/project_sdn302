@@ -15,6 +15,9 @@ const Sidebar = ({ onSelect, active }) => {
       <Nav.Link active={active === "add"} onClick={() => onSelect("add")}>
         ➕ Thêm câu hỏi
       </Nav.Link>
+      <Nav.Link active={active === "exams"} onClick={() => onSelect("exams")}>
+        📚 Danh sách đề thi
+      </Nav.Link>
     </Nav>
   );
 };
