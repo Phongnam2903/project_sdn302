@@ -1,10 +1,5 @@
 import { useState } from "react";
-import {
-  Form,
-  Button,
-  Card,
-  Alert,
-} from "react-bootstrap";
+import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import API from "../../services/api";
 import "./styles/Login.css";
@@ -24,6 +19,7 @@ const Login = () => {
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
         localStorage.setItem("name", name);
+        localStorage.setItem("email", email);
         if (role === "admin") {
           navigate("/admin");
         } else {

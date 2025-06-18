@@ -82,8 +82,30 @@ function UserExam() {
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
-  const finishExam = () => {
+  const submitResult = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await API.post(
+        "/exam-history",
+        {
+          examId: exam._id,
+          answers,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("📦 Lưu kết quả thành công:", res.data);
+    } catch (error) {
+      console.error("Lỗi khi gửi kết quả:", error);
+    }
+  };
+
+  const finishExam = async () => {
     setFinished(true);
+    await submitResult();
   };
 
   const getScore = () => {
@@ -117,7 +139,7 @@ function UserExam() {
         </Button>
       </div>
       <h3 className="text-center text-uppercase m-3">
-        {exam.title || "Đề thi"} - SỐ CÂU: {exam.questions.length}
+        {exam.title || "Đề thi"} - SỐ CÂU: {exam.questions.length} câu
       </h3>
 
       {finished && (
@@ -210,7 +232,12 @@ function UserExam() {
               </div>
 
               <div className="text-center mt-4">
-                <Button variant="primary" size="lg" onClick={finishExam}>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={finishExam}
+                  disabled={finished}
+                >
                   KẾT THÚC BÀI THI
                 </Button>
               </div>

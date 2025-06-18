@@ -3,10 +3,10 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const cors = require("cors");
 
-
 const authRouter = require("./routes/auth");
 const questionsRouter = require("./routes/questions");
 const examsRouter = require("./routes/exams");
+const examHistoryRouter = require("./routes/examHistory");
 // Load environment variables
 dotenv.config();
 
@@ -31,6 +31,7 @@ server.use(express.json());
 server.use("/api/auth", authRouter);
 server.use("/api/questions", questionsRouter);
 server.use("/api/exams", examsRouter);
+server.use("/api/exam-history", examHistoryRouter);
 
 // Start the server
 const PORT = process.env.PORT || 5000;

@@ -6,9 +6,6 @@ export default function Header() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const name = localStorage.getItem("name");
-
-  console.log(token);
-  console.log(name);
   
   const handleLogout = () => {
     localStorage.removeItem("token");

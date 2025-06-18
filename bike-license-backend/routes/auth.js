@@ -33,13 +33,13 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, role: user.role, name: user.name },
+      { id: user._id, role: user.role, name: user.name, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
     // ✅ Trả cả token và role ra client
-    res.json({ token, role: user.role, name: user.name });
+    res.json({ token, role: user.role, name: user.name, email: user.email });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
