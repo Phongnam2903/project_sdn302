@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Table, Button, Pagination, Spinner } from "react-bootstrap";
 
+
 const QuestionList = ({ questions, onEdit, onDelete, itemsPerPage = 5 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);

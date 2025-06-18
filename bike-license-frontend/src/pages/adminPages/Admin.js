@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Row, Col, Modal, Button, Form, Table } from "react-bootstrap";
+import { Row, Col, Modal, Button } from "react-bootstrap";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import QuestionList from "./components/QuestionList";
 import QuestionForm from "./components/QuestionForm";
 import API from "../../services/api";
+import RandomExamCreate from "./components/RandomExamCreate";
 
 const Admin = () => {
   const [activeView, setActiveView] = useState("questions");
@@ -12,11 +13,7 @@ const Admin = () => {
   const [exams, setExams] = useState([]);
   const [modalShow, setModalShow] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [examForm, setExamForm] = useState({
-    title: "",
-    category: "",
-    questionCount: 5,
-  });
+
   const [currentQuestion, setCurrentQuestion] = useState({
     content: "",
     category: "",
@@ -130,22 +127,6 @@ const Admin = () => {
     }
   };
 
-  const handleExamFormChange = (e) => {
-    const { name, value } = e.target;
-    setExamForm({ ...examForm, [name]: value });
-  };
-
-  const handleCreateExam = async () => {
-    try {
-      const res = await API.post("/exams/random", examForm);
-      alert("Tạo đề thành công!");
-      setExamForm({ title: "", category: "", questionCount: 5 });
-      loadExams();
-    } catch (err) {
-      alert(err.response?.data?.error || "Tạo đề thất bại.");
-    }
-  };
-
   return (
     <>
       <Header user={user} onLogout={handleLogout} />
@@ -168,63 +149,7 @@ const Admin = () => {
               onSubmit={handleSubmit}
             />
           )}
-          {activeView === "exams" && (
-            <>
-              <h4>Tạo đề ngẫu nhiên</h4>
-              <Form className="mb-3">
-                <Form.Group>
-                  <Form.Label>Tiêu đề</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="title"
-                    value={examForm.title}
-                    onChange={handleExamFormChange}
-                  />
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label>Chuyên mục</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="category"
-                    value={examForm.category}
-                    onChange={handleExamFormChange}
-                  />
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label>Số câu hỏi</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="questionCount"
-                    value={examForm.questionCount}
-                    onChange={handleExamFormChange}
-                  />
-                </Form.Group>
-                <Button className="mt-2" onClick={handleCreateExam}>
-                  🎲 Tạo đề ngẫu nhiên
-                </Button>
-              </Form>
-
-              <h5>Danh sách đề đã tạo</h5>
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-                    <th>Tiêu đề</th>
-                    <th>Chuyên mục</th>
-                    <th>Số câu hỏi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {exams.map((exam) => (
-                    <tr key={exam._id}>
-                      <td>{exam.title}</td>
-                      <td>{exam.category}</td>
-                      <td>{exam.questions.length}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </>
-          )}
+          {activeView === "exams" && <RandomExamCreate />}
         </Col>
       </Row>
 

@@ -77,9 +77,15 @@ router.get("/:id", auth, async (req, res) => {
       res.status(500).json({ error: "Không tìm thấy đề thi" });
     } else {
       res.json(exam);
-    }       
+    }
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+//delete exam
+router.delete("/:id", auth, isAdmin, async (req, res) => {
+  await Exam.findByIdAndDelete(req.params.id);
+  res.json({ message: "Deleted" });
 });
 module.exports = router;

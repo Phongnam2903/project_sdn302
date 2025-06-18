@@ -8,6 +8,7 @@ import ExamList from "./pages/adminPages/components/ExamList";
 import UserExam from "./pages/userPages/components/UI/UserExam";
 import Profile from "./pages/userPages/components/UI/Profile";
 import HistoryDetail from "./pages/userPages/components/UI/HistoryDetails";
+import ExamDetail from "./pages/adminPages/components/ExamDetail";
 function App() {
   return (
     <BrowserRouter>
@@ -20,7 +21,8 @@ function App() {
         <Route path="/admin/create-exam" element={<RandomExamCreate />} />
         <Route path="/admin/exams" element={<ExamList />} />
         <Route path="/user/exam/:id" element={<UserExam />} />
-        <Route path="/history/:id" element={<HistoryDetail />} />"
+        <Route path="/history/:id" element={<HistoryDetail />} />
+        <Route path="/exams/:id" element={<ExamDetail />} />
       </Routes>
     </BrowserRouter>
   );

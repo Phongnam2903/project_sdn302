@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Row, Col, Form } from "react-bootstrap";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useCallback } from "react-router-dom";
 import API from "../../../../services/api";
 import Layout from "../layout/Layout";
 
@@ -62,7 +62,7 @@ function UserExam() {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          finishExam();
+          finishExam(); // dùng được vì đã ổn định
           return 0;
         }
         return prev - 1;
@@ -70,7 +70,7 @@ function UserExam() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [exam, finished]);
+  }, [exam, finished, finishExam]); // ✅ Đã thêm finishExam
 
   const handleSelect = (questionId, answerIndex) => {
     setAnswers((prev) => ({ ...prev, [questionId]: answerIndex }));
