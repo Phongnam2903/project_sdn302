@@ -31,7 +31,6 @@ router.post("/random", auth, isAdmin, async (req, res) => {
         .json({ error: "Không có câu hỏi thuộc 'Điểm liệt'" });
     }
 
-    // 2. Chọn các câu còn lại (không phải điểm liệt)
     const normalQuestions = await Question.aggregate([
       {
         $match: {
@@ -48,7 +47,6 @@ router.post("/random", auth, isAdmin, async (req, res) => {
         .json({ error: "Không đủ câu hỏi không thuộc 'Điểm liệt'" });
     }
 
-    // 3. Tạo đề thi
     const exam = await Exam.create({
       title,
       category: "Tổng hợp",
@@ -63,8 +61,7 @@ router.post("/random", auth, isAdmin, async (req, res) => {
   }
 });
 
-// GET /api/exams get all exams
-router.get("/", auth, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const exams = await Exam.find().populate("questions");
     res.json(exams);
@@ -73,4 +70,16 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
+router.get("/:id", auth, async (req, res) => {
+  try {
+    const exam = await Exam.findById(req.params.id).populate("questions");
+    if (!exam) {
+      res.status(500).json({ error: "Không tìm thấy đề thi" });
+    } else {
+      res.json(exam);
+    }       
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 module.exports = router;

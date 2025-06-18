@@ -1,5 +1,24 @@
+import API from "../../../../services/api";
+import { useEffect, useState } from "react";
 import { Row, Col, Card, Alert, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+
 function MainContent() {
+  const [exams, setExams] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchExams = async () => {
+      try {
+        const res = await API.get("/exams");
+        setExams(res.data);
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách đề thi:", error);
+      }
+    };
+    fetchExams();
+  }, []);
+
   return (
     <Row>
       {/*col left */}
@@ -71,11 +90,30 @@ function MainContent() {
 
             <div className="mb-2 fw-bold">Chọn đề thi để luyện:</div>
             <div className="d-flex flex-wrap gap-2">
-              {[...Array(10)].map((_, i) => (
-                <Button key={i} variant="success" size="sm">
-                  Đề {i + 1}
+              {/* {exams.map((exam) => (
+                <Button
+                  key={exam._id}
+                  variant="light"
+                  className="text-start border rounded p-3"
+                  style={{ minWidth: "250px" }}
+                  onClick={() => navigate(`/user/exam/${exam._id}`)}
+                >
+                  <h5 className="mb-1">{exam.title}</h5>
+                  <div>📂 Chuyên mục: {exam.category}</div>
+                  <div>❓ Số câu hỏi: {exam.questions.length}</div>
                 </Button>
-              ))}
+              ))} */}
+              {exams.map((exam) => {
+                console.log("🎯 ID đề thi:", exam._id); // Thêm dòng này
+                return (
+                  <Button
+                    key={exam._id}
+                    onClick={() => navigate(`/user/exam/${exam._id}`)}
+                  >
+                    {exam.title}
+                  </Button>
+                );
+              })}
             </div>
 
             <div className="mt-3 fw-bold text-danger">Luyện thêm:</div>

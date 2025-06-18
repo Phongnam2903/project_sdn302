@@ -8,6 +8,7 @@ import Login from "./pages/authPages/Login";
 import Register from "./pages/authPages/Register";
 import RandomExamCreate from "./pages/adminPages/components/RandomExamCreate";
 import ExamList from "./pages/adminPages/components/ExamList";
+import UserExam from "./pages/userPages/components/UI/UserExam";
 function App() {
   return (
     <BrowserRouter>
@@ -21,6 +22,8 @@ function App() {
 
         <Route path="/admin/create-exam" element={<RandomExamCreate />} />
         <Route path="/admin/exams" element={<ExamList />} />
+
+        <Route path="/user/exam/:id" element={<UserExam />} />
       </Routes>
     </BrowserRouter>
   );

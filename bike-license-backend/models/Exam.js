@@ -8,7 +8,6 @@ const examSchema = new mongoose.Schema(
     },
     description: String,
 
-    // Danh sách câu hỏi thuộc đề
     questions: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -17,19 +16,16 @@ const examSchema = new mongoose.Schema(
       },
     ],
 
-    // Tổng số câu hỏi (nên tự tính khi tạo)
     totalQuestions: {
       type: Number,
       default: 0,
     },
 
-    // Thời gian làm bài (phút)
     duration: {
       type: Number,
-      default: 20, // ví dụ: 20 phút
+      default: 20, 
     },
 
-    // Đề dành cho loại bằng gì (A1, A2, B1,...)
     category: {
       type: String,
       required: true,
