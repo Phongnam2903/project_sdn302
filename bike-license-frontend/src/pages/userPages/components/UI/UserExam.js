@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Button, Card, Row, Col, Form } from "react-bootstrap";
-import { useParams, useNavigate, useCallback } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import API from "../../../../services/api";
 import Layout from "../layout/Layout";
 
-const TOTAL_TIME = 19 * 60; // 19 phút
+const TOTAL_TIME = 19 * 60;
 
 function UserExam() {
   const [exam, setExam] = useState(null);
@@ -31,7 +31,6 @@ function UserExam() {
       }
 
       try {
-        console.log("📦 Gọi API với ID:", examId);
         const res = await API.get(`/exams/${examId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -42,7 +41,6 @@ function UserExam() {
           );
         }
 
-        console.log("📄 Đề thi trả về:", res.data);
         setExam(res.data);
       } catch (error) {
         console.error("Lỗi khi fetch đề thi:", error);
@@ -55,34 +53,7 @@ function UserExam() {
     fetchExam();
   }, [examId, navigate]);
 
-  useEffect(() => {
-    if (!exam || finished) return;
-
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          finishExam(); // dùng được vì đã ổn định
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [exam, finished, finishExam]); // ✅ Đã thêm finishExam
-
-  const handleSelect = (questionId, answerIndex) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: answerIndex }));
-  };
-
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
-  };
-
-  const submitResult = async () => {
+  const submitResult = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       const res = await API.post(
@@ -101,16 +72,42 @@ function UserExam() {
     } catch (error) {
       console.error("Lỗi khi gửi kết quả:", error);
     }
-  };
+  }, [exam?._id, answers]);
 
-  const finishExam = async () => {
+  const finishExam = useCallback(async () => {
     setFinished(true);
     await submitResult();
+  }, [submitResult]);
+
+  useEffect(() => {
+    if (!exam || finished) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          finishExam();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [exam, finished, finishExam]);
+
+  const handleSelect = (questionId, answerIndex) => {
+    setAnswers((prev) => ({ ...prev, [questionId]: answerIndex }));
+  };
+
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
   const getScore = () => {
     if (!exam?.questions) return 0;
-
     let correct = 0;
     exam.questions.forEach((q) => {
       const selected = answers[q._id];
@@ -133,11 +130,16 @@ function UserExam() {
 
   return (
     <Layout>
+      <h2 className="text-center text-uppercase my-4 text-primary fw-bold">
+        Bài thi trắc nghiệm
+      </h2>
+
       <div className="text-left m-3">
         <Button variant="secondary" onClick={() => navigate("/")}>
           ⬅️ Quay lại trang chủ
         </Button>
       </div>
+
       <h3 className="text-center text-uppercase m-3">
         {exam.title || "Đề thi"} - SỐ CÂU: {exam.questions.length} câu
       </h3>
@@ -148,12 +150,12 @@ function UserExam() {
         </div>
       )}
 
-      <Row>
+      <Row className="gx-4 gy-4 align-items-stretch">
         <Col md={4}>
-          <Card>
-            <Card.Body>
+          <Card className="h-100">
+            <Card.Body className="d-flex flex-column">
               <h5 style={{ color: "blue" }}>Danh sách câu hỏi</h5>
-              <div className="d-flex flex-wrap">
+              <div className="d-flex flex-wrap gap-2 mt-3">
                 {exam.questions.map((q, idx) => (
                   <Button
                     key={q._id}
@@ -164,8 +166,12 @@ function UserExam() {
                         ? "secondary"
                         : "outline-success"
                     }
-                    className="m-1"
-                    style={{ width: 40 }}
+                    className="btn-sm text-center p-2 fw-bold"
+                    style={{
+                      width: "48px",
+                      height: "48px",
+                      lineHeight: "32px",
+                    }}
                     onClick={() => setCurrent(idx)}
                   >
                     {idx + 1}
@@ -177,11 +183,28 @@ function UserExam() {
         </Col>
 
         <Col md={8}>
-          <Card>
-            <Card.Body>
-              <div className="d-flex justify-content-between mb-2">
+          <Card className="h-100">
+            <Card.Body className="d-flex flex-column">
+              <div className="d-flex justify-content-between align-items-center mb-2">
                 <strong style={{ color: "blue" }}>Câu {current + 1}</strong>
                 <strong style={{ color: "red" }}>{formatTime(timeLeft)}</strong>
+              </div>
+
+              {/* Thanh tiến trình */}
+              <div className="mb-3">
+                <div className="progress" style={{ height: "10px" }}>
+                  <div
+                    className="progress-bar bg-danger"
+                    role="progressbar"
+                    style={{
+                      width: `${(timeLeft / TOTAL_TIME) * 100}%`,
+                      transition: "width 1s linear",
+                    }}
+                    aria-valuenow={(timeLeft / TOTAL_TIME) * 100}
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  ></div>
+                </div>
               </div>
 
               <div className="mb-3">{question.content}</div>
@@ -194,7 +217,7 @@ function UserExam() {
                 />
               )}
 
-              <Form>
+              <Form className="mb-3">
                 {question.answers.map((a, idx) => {
                   const selected = answers[question._id];
                   const isChecked = selected === idx;
@@ -213,7 +236,7 @@ function UserExam() {
                 })}
               </Form>
 
-              <div className="d-flex justify-content-between mt-3">
+              <div className="d-flex justify-content-between mt-auto">
                 <Button
                   variant="outline-primary"
                   onClick={() => setCurrent(current - 1)}

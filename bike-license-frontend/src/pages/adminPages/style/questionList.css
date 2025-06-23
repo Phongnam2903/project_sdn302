@@ -1,0 +1,12 @@
+.question-list table tbody tr:hover {
+    background-color: #f1fdf5;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    ;
+}

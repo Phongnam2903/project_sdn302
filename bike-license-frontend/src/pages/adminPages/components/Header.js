@@ -1,10 +1,20 @@
 import React from "react";
 import { Navbar, Container, Nav, Button, Image } from "react-bootstrap";
-
-const Header = ({ user, onLogout }) => {
+import "../style/header.css";
+const Header = ({ user, onLogout, onToggleSidebar }) => {
   return (
-    <Navbar bg="success" variant="dark" expand="lg">
-      <Container>
+    <Navbar bg="success" variant="dark" expand="lg" className="px-3">
+      <Container
+        fluid
+        className="d-flex justify-content-between align-items-center"
+      >
+        <Button
+          variant="outline-light"
+          className="d-md-none me-2"
+          onClick={onToggleSidebar}
+        >
+          ☰
+        </Button>
         <Navbar.Brand href="/admin">Admin Panel</Navbar.Brand>
         <Nav className="ml-auto d-flex align-items-center">
           {user && (

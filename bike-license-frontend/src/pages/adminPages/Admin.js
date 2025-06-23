@@ -8,6 +8,7 @@ import API from "../../services/api";
 import RandomExamCreate from "./components/RandomExamCreate";
 
 const Admin = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeView, setActiveView] = useState("questions");
   const [questions, setQuestions] = useState([]);
   const [exams, setExams] = useState([]);
@@ -129,9 +130,18 @@ const Admin = () => {
 
   return (
     <>
-      <Header user={user} onLogout={handleLogout} />
+      <Header
+        user={user}
+        onLogout={handleLogout}
+        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+      />
       <Row>
-        <Col md={2}>
+        <Col
+          md={2}
+          className={`sidebar-container ${
+            sidebarOpen ? "d-block" : "d-none"
+          } d-md-block`}
+        >
           <Sidebar active={activeView} onSelect={setActiveView} />
         </Col>
         <Col md={10} className="p-4">

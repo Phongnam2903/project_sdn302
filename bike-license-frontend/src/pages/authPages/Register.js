@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { Form, Button, Card, Container, Row, Col } from "react-bootstrap";
+import {
+  Form,
+  Button,
+  Card,
+  Container,
+  Row,
+  Col,
+  Modal,
+} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import API from "../../services/api";
 
@@ -7,12 +15,17 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const navigate = useNavigate();
 
   const handleRegister = async () => {
     try {
       await API.post("/auth/register", { name: username, email, password });
-      navigate("/login");
+      setShowSuccessModal(true);
+      setTimeout(() => {
+        setShowSuccessModal(false);
+        navigate("/login");
+      }, 2000); 
     } catch (err) {
       alert("Đăng ký thất bại");
     }
@@ -37,7 +50,7 @@ const Register = () => {
               <h3 className="text-center mb-4">Đăng ký tài khoản</h3>
               <Form>
                 <Form.Group className="mb-3">
-                  <Form.Label>Họ và TênTên</Form.Label>
+                  <Form.Label>Họ và Tên</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Nhập tên"
@@ -79,6 +92,21 @@ const Register = () => {
           </Col>
         </Row>
       </Container>
+
+      {/* ✅ Modal thông báo đăng ký thành công */}
+      <Modal
+        show={showSuccessModal}
+        onHide={() => setShowSuccessModal(false)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>🎉 Đăng ký thành công</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Tài khoản của bạn đã được tạo thành công. Đang chuyển hướng tới trang
+          đăng nhập...
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

@@ -1,0 +1,6 @@
+.sidebar-container {
+  transition: all 0.3s ease-in-out;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  z-index: 1000;
+}

@@ -1,17 +1,22 @@
 import { useState } from "react";
-import { Form, Button, Row, Col, Alert } from "react-bootstrap";
-
+import {
+  Form,
+  Button,
+  Row,
+  Col,
+  Alert,
+  OverlayTrigger,
+  Tooltip,
+} from "react-bootstrap";
+import { Plus, Trash2 } from "lucide-react";
+import "../style/questionForm.css";
 const QuestionForm = ({ question, onChange, onSubmit }) => {
   const [showSuccess, setShowSuccess] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit();
-
-    // Hiển thị thông báo
     setShowSuccess(true);
-
-    // Ẩn sau 3 giây
     setTimeout(() => setShowSuccess(false), 3000);
   };
 
@@ -40,18 +45,19 @@ const QuestionForm = ({ question, onChange, onSubmit }) => {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit} className="question-form">
+      <h4 className="mb-4 text-center text-primary fw-bold">📝 Thêm câu hỏi</h4>
       {showSuccess && (
         <Alert
           variant="success"
-          onClose={() => setShowSuccess(false)}
           dismissible
+          onClose={() => setShowSuccess(false)}
         >
           ✅ Câu hỏi đã được lưu thành công!
         </Alert>
       )}
 
-      <Form.Group className="mb-3">
+      <Form.Group className="mb-4">
         <Form.Label>
           <strong>Câu hỏi</strong>
         </Form.Label>
@@ -59,24 +65,27 @@ const QuestionForm = ({ question, onChange, onSubmit }) => {
           name="content"
           value={question.content}
           onChange={onChange}
+          placeholder="Nhập nội dung câu hỏi..."
         />
       </Form.Group>
 
-      {question.answers.map((answer, i) => (
-        <Form.Group key={i} className="mb-3">
-          <Row>
-            <Col xs={1} className="d-flex align-items-center">
+      <div className="mb-4">
+        <Form.Label>
+          <strong>Đáp án</strong>
+        </Form.Label>
+        {question.answers.map((answer, i) => (
+          <Row className="align-items-center mb-2" key={i}>
+            <Col xs={1}>
               <strong>{String.fromCharCode(65 + i)}.</strong>
             </Col>
-            <Col xs={7}>
+            <Col xs={6}>
               <Form.Control
-                type="text"
                 placeholder={`Đáp án ${String.fromCharCode(65 + i)}`}
                 value={answer.text}
                 onChange={(e) => handleAnswerChange(i, "text", e.target.value)}
               />
             </Col>
-            <Col xs={2} className="d-flex align-items-center">
+            <Col xs={2}>
               <Form.Check
                 type="radio"
                 label="Đúng"
@@ -85,33 +94,38 @@ const QuestionForm = ({ question, onChange, onSubmit }) => {
                 onChange={() => handleAnswerChange(i, "isCorrect", true)}
               />
             </Col>
-            <Col xs={2} className="d-flex align-items-center gap-2">
-              <Button
-                variant="success"
-                size="sm"
-                onClick={handleAddAnswer}
-                title="Thêm đáp án"
-              >
-                +
-              </Button>
+            <Col xs={3} className="d-flex gap-2">
+              {question.answers.length < 4 &&
+                i === question.answers.length - 1 && (
+                  <OverlayTrigger overlay={<Tooltip>Thêm đáp án</Tooltip>}>
+                    <Button
+                      variant="outline-success"
+                      size="sm"
+                      onClick={handleAddAnswer}
+                    >
+                      <Plus size={16} />
+                    </Button>
+                  </OverlayTrigger>
+                )}
               {question.answers.length > 1 && (
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onClick={() => handleRemoveAnswer(i)}
-                  title="Xoá đáp án"
-                >
-                  🗑
-                </Button>
+                <OverlayTrigger overlay={<Tooltip>Xoá đáp án</Tooltip>}>
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={() => handleRemoveAnswer(i)}
+                  >
+                    <Trash2 size={16} />
+                  </Button>
+                </OverlayTrigger>
               )}
             </Col>
           </Row>
-        </Form.Group>
-      ))}
+        ))}
+      </div>
 
       <Form.Group className="mb-3">
         <Form.Label>
-          <strong>Hình ảnh (tuỳ chọn)</strong>
+          <strong>Hình ảnh (tùy chọn)</strong>
         </Form.Label>
         <Form.Control
           type="file"
@@ -121,7 +135,7 @@ const QuestionForm = ({ question, onChange, onSubmit }) => {
         />
       </Form.Group>
 
-      <Form.Group className="mb-3">
+      <Form.Group className="mb-4">
         <Form.Label>
           <strong>Chuyên mục</strong>
         </Form.Label>
@@ -129,12 +143,15 @@ const QuestionForm = ({ question, onChange, onSubmit }) => {
           name="category"
           value={question.category}
           onChange={onChange}
+          placeholder="VD: Điểm Liệt, Biển Báo..."
         />
       </Form.Group>
 
-      <Button variant="primary" type="submit">
-        Lưu câu hỏi
-      </Button>
+      <div className="text-end">
+        <Button type="submit" variant="primary" size="md">
+          💾 Lưu câu hỏi
+        </Button>
+      </div>
     </Form>
   );
 };
