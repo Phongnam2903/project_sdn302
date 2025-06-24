@@ -25,7 +25,7 @@ const Register = () => {
       setTimeout(() => {
         setShowSuccessModal(false);
         navigate("/login");
-      }, 2000); 
+      }, 2000);
     } catch (err) {
       alert("Đăng ký thất bại");
     }
@@ -81,7 +81,7 @@ const Register = () => {
 
                 <div className="d-flex justify-content-between">
                   <Button variant="secondary" onClick={() => navigate(-1)}>
-                    ⬅ Quay lại
+                    Quay lại
                   </Button>
                   <Button variant="success" onClick={handleRegister}>
                     Đăng ký
@@ -93,7 +93,6 @@ const Register = () => {
         </Row>
       </Container>
 
-      {/* ✅ Modal thông báo đăng ký thành công */}
       <Modal
         show={showSuccessModal}
         onHide={() => setShowSuccessModal(false)}

@@ -30,14 +30,14 @@ const Login = () => {
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError("Sai tài khoản hoặc mật khẩu.");
+      setError("Tài khoản hoặc mật khẩu của bạn bị sai hãy kiểm tra lại.");
     }
   };
 
   return (
     <div className="login-background">
       <Card className="card-login">
-        <h3 className="text-center mb-4">Đăng nhập hệ thống</h3>
+        <h3 className="text-center mb-4">Đăng nhập</h3>
 
         {error && <Alert variant="danger">{error}</Alert>}
 
@@ -71,7 +71,7 @@ const Login = () => {
 
         <div className="d-flex justify-content-between">
           <Button variant="secondary" onClick={() => navigate("/")}>
-            ⬅ Quay lại
+            Quay lại
           </Button>
           <Button
             variant="outline-success"
