@@ -12,7 +12,6 @@ const Home = () => {
         Đề Thi Thử Bằng Lái Xe Máy A1
       </h2>
       <Container>
-        {" "}
         <MainContent />
       </Container>
     </Layout>
