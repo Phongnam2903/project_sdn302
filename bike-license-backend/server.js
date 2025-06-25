@@ -32,6 +32,7 @@ server.use("/api/auth", authRouter);
 server.use("/api/questions", questionsRouter);
 server.use("/api/exams", examsRouter);
 server.use("/api/exam-history", examHistoryRouter);
+server.use("/uploads", express.static("uploads"));
 
 // Start the server
 const PORT = process.env.PORT || 5000;

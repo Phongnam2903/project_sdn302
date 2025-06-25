@@ -5,7 +5,7 @@ import { Container } from "react-bootstrap";
 
 const Layout = ({ children }) => {
   return (
-    <div className="container-fluid">
+    <div className="layout">
       <Header />
       <Container>{children}</Container>
       <Footer />

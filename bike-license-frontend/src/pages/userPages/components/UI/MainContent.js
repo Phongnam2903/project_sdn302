@@ -34,7 +34,6 @@ function MainContent() {
               alt="img"
               className="my-3"
             />
-
             <Card.Text>
               Phần mềm được phát triển dựa trên cấu trúc bộ đề thi sát hạch lý
               thuyết lái xe mô tô hạng A1 do Bộ Công An ban hành quy định trong
@@ -49,7 +48,6 @@ function MainContent() {
       </Col>
       {/*col right */}
       <Col md={6}>
-        {" "}
         <Card className="mb-4">
           <Card.Body>
             <Card.Title className="text-success text-uppercase fw-bold">
@@ -66,17 +64,17 @@ function MainContent() {
               sẽ bố trí
               <strong className="text-danger">
                 từ 2 - 4 câu hỏi điểm liệt
-              </strong>{" "}
+              </strong>
               để học viên có thể làm quen và ghi nhớ, tránh việc làm sai câu hỏi
               liệt.
             </Card.Text>
             <ul>
               <li>
-                Số lượng câu hỏi:{" "}
+                Số lượng câu hỏi:
                 <strong className="text-danger">25 Câu</strong>
               </li>
               <li>
-                Yêu cầu làm đúng:{" "}
+                Yêu cầu làm đúng:
                 <strong className="text-danger">21/25 Câu Đúng</strong>
               </li>
               <li>
@@ -90,21 +88,8 @@ function MainContent() {
 
             <div className="mb-2 fw-bold">Chọn đề thi để luyện:</div>
             <div className="d-flex flex-wrap gap-2">
-              {/* {exams.map((exam) => (
-                <Button
-                  key={exam._id}
-                  variant="light"
-                  className="text-start border rounded p-3"
-                  style={{ minWidth: "250px" }}
-                  onClick={() => navigate(`/user/exam/${exam._id}`)}
-                >
-                  <h5 className="mb-1">{exam.title}</h5>
-                  <div>📂 Chuyên mục: {exam.category}</div>
-                  <div>❓ Số câu hỏi: {exam.questions.length}</div>
-                </Button>
-              ))} */}
               {exams.map((exam) => {
-                console.log("🎯 ID đề thi:", exam._id); // Thêm dòng này
+                
                 return (
                   <Button
                     key={exam._id}

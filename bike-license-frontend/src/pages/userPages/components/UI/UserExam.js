@@ -201,7 +201,7 @@ function UserExam() {
         <div className="text-center mt-4">Đang tải đề thi...</div>
       ) : !exam.questions || exam.questions.length === 0 ? (
         <div className="text-center mt-4 text-danger">
-          ❌ Không có câu hỏi nào trong đề thi
+          Không có câu hỏi nào trong đề thi
         </div>
       ) : (
         <>
@@ -210,7 +210,7 @@ function UserExam() {
           </h2>
           <div className="text-left m-3">
             <Button variant="secondary" onClick={() => navigate("/")}>
-              ⬅️ Quay lại trang chủ
+              Quay lại trang chủ
             </Button>
           </div>
 
@@ -220,7 +220,7 @@ function UserExam() {
 
           {finished && (
             <div className="alert alert-info text-center">
-              ✅ Bạn làm đúng {getScore()} / {exam.questions.length} câu
+              Bạn làm đúng {getScore()} / {exam.questions.length} câu
             </div>
           )}
 
@@ -280,9 +280,10 @@ function UserExam() {
 
                   {exam.questions[current].image && (
                     <img
-                      src={exam.questions[current].image}
-                      alt="Hình minh họa"
+                      src={`http://localhost:5000${exam.questions[current].image}`}
+                      alt="Ảnh câu hỏi"
                       className="img-fluid mb-3"
+                      style={{ maxHeight: "200px", objectFit: "contain" }}
                     />
                   )}
 

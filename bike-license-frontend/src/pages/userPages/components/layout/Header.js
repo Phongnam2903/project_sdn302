@@ -1,12 +1,13 @@
 import React from "react";
 import { Nav, NavDropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import "../../style/Header.css";
 
 export default function Header() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const name = localStorage.getItem("name");
-  
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
@@ -21,7 +22,7 @@ export default function Header() {
     >
       <Nav.Item>
         <Nav.Link className="text-white" href="#">
-          Đăng Ký Thi A1 &gt;
+          Đăng Ký Thi A1
         </Nav.Link>
       </Nav.Item>
       <Nav.Item>
@@ -30,12 +31,12 @@ export default function Header() {
         </Nav.Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link className="text-dark bg-warning mx-1" href="#">
+        <Nav.Link className="text-white" href="#">
           Ôn Thi GPLX A1
         </Nav.Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link className="text-dark bg-warning" href="#">
+        <Nav.Link className="text-white" href="#">
           Ôn Thi GPLX A
         </Nav.Link>
       </Nav.Item>
