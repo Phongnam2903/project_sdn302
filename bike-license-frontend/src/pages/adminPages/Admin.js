@@ -6,7 +6,7 @@ import QuestionList from "./components/QuestionList";
 import QuestionForm from "./components/QuestionForm";
 import API from "../../services/api";
 import RandomExamCreate from "./components/RandomExamCreate";
-
+import "../adminPages/style/admin.css";
 const Admin = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeView, setActiveView] = useState("questions");

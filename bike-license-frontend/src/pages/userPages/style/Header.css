@@ -1,5 +1,95 @@
-.nav-link:hover {
-  background-color: #1ea53b;
+.custom-navbar {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+  border-bottom: 3px solid #fff;
+  padding: 0.8rem 0;
+}
+
+.custom-navbar .navbar-brand {
   color: #fff !important;
-  transition: background-color 0.3s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.custom-navbar .navbar-brand:hover {
+  transform: translateY(-2px);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.nav-item-custom {
+  color: #fff !important;
+  font-weight: 500;
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem !important;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-item-custom::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.nav-item-custom:hover::before {
+  left: 100%;
+}
+
+.nav-item-custom:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.user-dropdown .dropdown-toggle {
+  color: #fff !important;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+}
+
+.user-dropdown .dropdown-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.user-dropdown .dropdown-menu {
+  border: none;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  padding: 0.5rem 0;
+  margin-top: 0.5rem;
+}
+
+.user-dropdown .dropdown-item {
+  padding: 0.75rem 1.5rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.user-dropdown .dropdown-item:hover {
+  background-color: #f8f9fa;
+  transform: translateX(5px);
+}
+
+@media (max-width: 991px) {
+  .nav-item-custom {
+    margin: 0.25rem 0;
+    text-align: center;
+  }
+
+  .custom-navbar .navbar-collapse {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
 }
