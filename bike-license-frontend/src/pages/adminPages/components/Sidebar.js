@@ -10,7 +10,7 @@ const Sidebar = ({ onSelect, active }) => {
   ];
 
   return (
-    <Nav className="flex-column sidebar-custom bg-light p-3 shadow-sm">
+    <Nav className="flex-column sidebar-custom bg-dark p-3 shadow-sm">
       {menuItems.map((item) => (
         <Nav.Link
           key={item.key}

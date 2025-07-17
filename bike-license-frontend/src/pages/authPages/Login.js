@@ -17,7 +17,6 @@ import {
   ArrowLeft,
   UserPlus,
   AlertCircle,
-  Award,
 } from "lucide-react";
 import API from "../../services/api";
 import "./styles/Auth.css";
@@ -124,9 +123,6 @@ const Login = () => {
         {/* Main Card */}
         <Card className={`auth-card login-card ${isVisible ? "visible" : ""}`}>
           <div className="auth-header">
-            <div className="auth-icon">
-              <Award size={32} />
-            </div>
             <h2 className="auth-title">Đăng Nhập</h2>
             <p className="auth-subtitle">Chào mừng bạn quay trở lại!</p>
           </div>

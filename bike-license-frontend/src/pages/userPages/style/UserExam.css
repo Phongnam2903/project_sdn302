@@ -206,14 +206,22 @@
 }
 
 .exam-content {
-    gap: 1.5rem;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 1rem;
 }
 
+.question-separator {
+    display: flex;
+}
 .navigation-card {
+    width: 100%;
     border: none;
     border-radius: 15px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     top: 1rem;
+    flex-shrink: 0;
 }
 
 .navigation-card .card-header {
@@ -285,6 +293,8 @@
 }
 
 .question-card {
+    flex: 1;
+    min-width: 0;
     border: none;
     border-radius: 15px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
