@@ -9,6 +9,7 @@ import UserExam from "./pages/userPages/components/UI/UserExam";
 import Profile from "./pages/userPages/components/UI/Profile";
 import HistoryDetail from "./pages/userPages/components/UI/HistoryDetails";
 import ExamDetail from "./pages/adminPages/components/ExamDetail";
+import ResetPassword from "./pages/authPages/ResetPassword";
 function App() {
   return (
     <BrowserRouter>
@@ -20,6 +21,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin/create-exam" element={<RandomExamCreate />} />
         <Route path="/admin/exams" element={<ExamList />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/user/exam/:id" element={<UserExam />} />
         <Route path="/history/:id" element={<HistoryDetail />} />
         <Route path="/exams/:id" element={<ExamDetail />} />

@@ -17,6 +17,7 @@ import {
   ArrowLeft,
   UserPlus,
   AlertCircle,
+  Key,
 } from "lucide-react";
 import API from "../../services/api";
 import "./styles/Auth.css";
@@ -32,7 +33,6 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Trigger entrance animation
     const timer = setTimeout(() => setIsVisible(true), 100);
     return () => clearTimeout(timer);
   }, []);
@@ -107,6 +107,58 @@ const Login = () => {
     }
 
     if (error) setError(null);
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setValidationErrors((prev) => ({
+        ...prev,
+        email: "Vui lòng nhập email để đặt lại mật khẩu",
+      }));
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setValidationErrors((prev) => ({
+        ...prev,
+        email: "Email không hợp lệ",
+      }));
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await API.post("/auth/forgot_password", { email });
+
+      console.log("✅ Forgot password response:", response.data);
+
+      if (response.data.success) {
+        navigate("/reset-password", { state: { email } });
+      } else {
+
+        setError(
+          response.data.message || "Không thể gửi mã OTP. Vui lòng thử lại sau."
+        );
+      }
+    } catch (err) {
+      console.error("❌ Forgot password error:", err);
+
+      if (err.response) {
+        console.log("⛔ Response status:", err.response.status);
+        console.log("⛔ Response data:", err.response.data);
+
+        setError(
+          err.response.data.message ||
+            "Đã xảy ra lỗi phía máy chủ. Vui lòng thử lại sau."
+        );
+      } else {
+        setError("Không thể kết nối đến máy chủ. Vui lòng thử lại sau.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -251,6 +303,15 @@ const Login = () => {
               >
                 <UserPlus size={16} className="me-1" />
                 Đăng ký
+              </Button>
+              <Button
+                variant="outline-primary"
+                className="secondary-button"
+                onClick={handleForgotPassword}
+                disabled={loading || !email}
+              >
+                <Key size={16} className="me-1" />
+                Quên mật khẩu
               </Button>
             </div>
 
