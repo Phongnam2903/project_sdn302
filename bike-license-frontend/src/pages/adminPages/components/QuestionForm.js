@@ -10,14 +10,21 @@ import {
 } from "react-bootstrap";
 import { Plus, Trash2 } from "lucide-react";
 import "../style/questionForm.css";
+
 const QuestionForm = ({ question, onChange, onSubmit }) => {
   const [showSuccess, setShowSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(""); 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit();
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000);
+    try {
+      await onSubmit();
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    } catch (error) {
+      console.error("Lỗi kiểm tra câu hỏi:", error);
+      alert(error.message || " Lỗi khi lưu câu hỏi. Vui lòng thử lại.");
+    }
   };
 
   const handleAnswerChange = (index, field, value) => {
@@ -45,8 +52,9 @@ const QuestionForm = ({ question, onChange, onSubmit }) => {
   };
 
   return (
-    <Form onSubmit={handleSubmit} className="question-form">
+    <Form id="question-form" onSubmit={handleSubmit} className="question-form">
       <h4 className="mb-4 text-center text-primary fw-bold">📝 Thêm câu hỏi</h4>
+
       {showSuccess && (
         <Alert
           variant="success"
@@ -54,6 +62,12 @@ const QuestionForm = ({ question, onChange, onSubmit }) => {
           onClose={() => setShowSuccess(false)}
         >
           ✅ Câu hỏi đã được lưu thành công!
+        </Alert>
+      )}
+
+      {errorMsg && (
+        <Alert variant="danger" dismissible onClose={() => setErrorMsg("")}>
+          {errorMsg}
         </Alert>
       )}
 

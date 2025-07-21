@@ -111,6 +111,19 @@ const Admin = () => {
     }
 
     try {
+      //  Kiểm tra câu hỏi trùng nếu là chế độ thêm mới
+      if (!editMode) {
+        const res = await API.get(
+          `/questions/check?content=${encodeURIComponent(
+            currentQuestion.content
+          )}`
+        );
+        if (res.data.exists) {
+          throw new Error("⚠️ Câu hỏi đã tồn tại trong hệ thống.");
+        }
+      }
+
+      //  Nếu không trùng hoặc đang chỉnh sửa, tiến hành submit
       if (editMode) {
         await API.put(`/questions/${currentQuestion._id}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
@@ -120,11 +133,20 @@ const Admin = () => {
           headers: { "Content-Type": "multipart/form-data" },
         });
       }
+
       loadQuestions();
       setModalShow(false);
       resetForm();
     } catch (error) {
       console.error("Submit failed:", error);
+      const errorMessage =
+        error.response?.data?.error ||
+        error.message ||
+        " Lỗi khi lưu câu hỏi. Vui lòng thử lại.";
+
+      alert(errorMessage);
+
+      throw new Error(errorMessage);
     }
   };
 
@@ -190,7 +212,11 @@ const Admin = () => {
           >
             Đóng
           </Button>
-          <Button variant="primary" onClick={handleSubmit}>
+          <Button
+            variant="primary"
+            type="submit" 
+            form="question-form" 
+          >
             {editMode ? "Cập nhật" : "Thêm mới"}
           </Button>
         </Modal.Footer>

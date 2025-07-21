@@ -33,18 +33,29 @@ router.post(
   async (req, res) => {
     try {
       const { content, category, answers } = req.body;
+
+      // Kiểm tra dữ liệu hợp lệ
       if (!content || !answers || JSON.parse(answers).length < 2) {
         return res.status(400).json({ error: "Invalid question data" });
       }
+
+      // ✅ Kiểm tra câu hỏi đã tồn tại (so sánh content và category)
+      const existingQuestion = await Question.findOne({ content, category });
+      if (existingQuestion) {
+        return res.status(409).json({ error: "Question already exists" });
+      }
+
+      // Tạo mới câu hỏi
       const question = await Question.create({
         content,
         category,
         answers: JSON.parse(answers),
         image: req.file ? `/uploads/${req.file.filename}` : null,
       });
+
       res.status(201).json(question);
     } catch (err) {
-      console.log("Upload erro:", err);
+      console.log("Upload error:", err);
       res.status(500).json({ error: err.message });
     }
   }
@@ -90,6 +101,19 @@ router.put("/:id", auth, isAdmin, upload.single("image"), async (req, res) => {
 router.delete("/:id", auth, isAdmin, async (req, res) => {
   await Question.findByIdAndDelete(req.params.id);
   res.json({ message: "Deleted" });
+});
+// routes/questions.js
+router.get("/check", async (req, res) => {
+  try {
+    const { content } = req.query;
+    if (!content) return res.status(400).json({ exists: false });
+
+    const exists = await Question.exists({ content: content.trim() });
+    res.json({ exists: !!exists });
+  } catch (err) {
+    console.error("Lỗi kiểm tra câu hỏi:", err);
+    res.status(500).json({ exists: false, error: err.message });
+  }
 });
 
 module.exports = router;

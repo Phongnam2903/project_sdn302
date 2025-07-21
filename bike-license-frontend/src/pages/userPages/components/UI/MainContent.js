@@ -177,7 +177,10 @@ function MainContent() {
                       key={exam._id}
                       variant="outline-primary"
                       className="exam-button mb-2 me-2"
-                      onClick={() => navigate(`/user/exam/${exam._id}`)}
+                      onClick={() => {
+                        localStorage.removeItem(`exam_${exam._id}_submitted`);
+                        navigate(`/user/exam/${exam._id}`);
+                      }}
                     >
                       <BookOpen size={16} className="me-1" />
                       {exam.title}

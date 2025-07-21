@@ -21,8 +21,6 @@ import {
   ArrowLeft,
   ArrowRight,
   Flag,
-  Play,
-  Pause,
   Eye,
   Target,
 } from "lucide-react";
@@ -30,7 +28,7 @@ import API from "../../../../services/api";
 import Layout from "../layout/Layout";
 import "../../style/UserExam.css";
 
-const TOTAL_TIME = 19 * 60; // 19 phút
+const TOTAL_TIME = 19 * 60;
 
 function UserExam() {
   const [exam, setExam] = useState(null);
@@ -79,6 +77,13 @@ function UserExam() {
         return;
       }
 
+      const submittedKey = `exam_${examId}_submitted`;
+      const isSubmitted = localStorage.getItem(submittedKey) === "true";
+      if (isSubmitted) {
+        setFinished(true);
+        setIsPaused(true);
+      }
+
       try {
         const res = await API.get(`/exams/${examId}`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -101,6 +106,16 @@ function UserExam() {
 
     fetchExam();
   }, [examId, navigate]);
+
+  const hasFailedCriticalQuestion = () => {
+    if (!exam?.questions) return false;
+
+    return exam.questions.some((q) => {
+      if (q.category !== "Điểm Liệt") return false;
+      const selected = answers[q._id];
+      return selected === undefined || !q.answers[selected]?.isCorrect;
+    });
+  };
 
   const submitResult = useCallback(async () => {
     try {
@@ -125,8 +140,11 @@ function UserExam() {
   const finishExam = useCallback(async () => {
     setFinished(true);
     setIsPaused(true);
+
+    localStorage.setItem(`exam_${exam?._id}_submitted`, "true");
+
     await submitResult();
-  }, [submitResult]);
+  }, [submitResult, exam?._id]);
 
   useEffect(() => {
     if (!exam || finished || isPaused) return;
@@ -193,14 +211,11 @@ function UserExam() {
     finishExam();
   };
 
-  const togglePause = () => {
-    setIsPaused(!isPaused);
-  };
-
   const goToQuestion = (index) => {
     setCurrent(index);
   };
 
+  const isPassed = getScore() >= 21 && !hasFailedCriticalQuestion();
   const nextQuestion = () => {
     if (current < exam.questions.length - 1) {
       setCurrent(current + 1);
@@ -299,19 +314,6 @@ function UserExam() {
               {exam.questions.length} câu hỏi - Thời gian: 19 phút
             </p>
           </div>
-
-          <div className="exam-controls">
-            <Button
-              variant={isPaused ? "success" : "warning"}
-              size="sm"
-              onClick={togglePause}
-              disabled={finished}
-              className="pause-button"
-            >
-              {isPaused ? <Play size={16} /> : <Pause size={16} />}
-              {isPaused ? "Tiếp tục" : "Tạm dừng"}
-            </Button>
-          </div>
         </div>
 
         {/* Progress Section */}
@@ -400,12 +402,12 @@ function UserExam() {
         {/* Result Display */}
         {finished && (
           <Alert
-            variant={getScore() >= 21 ? "success" : "danger"}
+            variant={isPassed ? "success" : "danger"}
             className="result-alert"
           >
             <div className="result-content">
               <div className="result-icon">
-                {getScore() >= 21 ? (
+                {isPassed ? (
                   <CheckCircle size={32} className="text-success" />
                 ) : (
                   <AlertTriangle size={32} className="text-danger" />
@@ -413,20 +415,26 @@ function UserExam() {
               </div>
               <div className="result-info">
                 <h5 className="mb-1">
-                  {getScore() >= 21
+                  {isPassed
                     ? "🎉 Chúc mừng! Bạn đã đạt"
                     : "😔 Rất tiếc! Bạn chưa đạt"}
                 </h5>
                 <p className="mb-0">
-                  Điểm số:{" "}
+                  Điểm số:
                   <strong>
                     {getScore()}/{exam.questions.length}
-                  </strong>{" "}
+                  </strong>
                   -{" "}
                   <strong>
                     {Math.round((getScore() / exam.questions.length) * 100)}%
                   </strong>
                 </p>
+                {!isPassed && hasFailedCriticalQuestion() && (
+                  <p className="text-danger mt-2">
+                    ❌ Bạn đã làm sai ít nhất một câu hỏi{" "}
+                    <strong>Điểm Liệt</strong>. Bài thi không đạt yêu cầu.
+                  </p>
+                )}
               </div>
               <Button
                 variant="primary"
@@ -442,7 +450,6 @@ function UserExam() {
 
         <Row className="exam-content">
           <div className="question-separator">
-            {" "}
             {/* Question Navigation */}
             <Col lg={3}>
               <Card className="navigation-card sticky-top">
