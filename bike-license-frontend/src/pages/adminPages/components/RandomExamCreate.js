@@ -7,7 +7,7 @@ const RandomExamCreate = () => {
   const [examForm, setExamForm] = useState({
     title: "",
     category: "",
-    questionCount: 19,
+    questionCount: 21,
   });
   const [exams, setExams] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,7 +37,7 @@ const RandomExamCreate = () => {
     try {
       await API.post("/exams/random", examForm);
       alert("Tạo đề thành công!");
-      setExamForm({ title: "", category: "", questionCount: 5 });
+      setExamForm({ title: "", category: "", questionCount: 1 });
       loadExams();
     } catch (err) {
       alert(err.response?.data?.error || "Tạo đề thất bại.");
@@ -65,7 +65,7 @@ const RandomExamCreate = () => {
       try {
         await API.delete(`/exams/${id}`);
         alert("Xoá thành công!");
-        loadExams(); // Reload lại danh sách sau khi xoá
+        loadExams(); 
       } catch (err) {
         console.error("Xoá thất bại:", err);
         alert("Xoá đề thi thất bại.");

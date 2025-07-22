@@ -8,49 +8,63 @@ const { auth, isAdmin } = require("../middleware/auth");
 router.post("/random", auth, isAdmin, async (req, res) => {
   try {
     const { title, questionCount } = req.body;
+    const fatalCount = 10;
 
-    if (!title || !questionCount || questionCount < 1) {
-      return res
-        .status(400)
-        .json({ error: "Thiếu thông tin hoặc số câu không hợp lệ" });
+    if (!title || !questionCount || questionCount < fatalCount + 1) {
+      return res.status(400).json({
+        error: `Thiếu thông tin hoặc số câu không hợp lệ. Cần ít nhất ${fatalCount + 1} câu.`,
+      });
     }
 
-    // 1. Chọn 1 câu điểm liệt ngẫu nhiên
-    const fatalQuestion = await Question.aggregate([
+    // Lấy ngẫu nhiên fatalCount câu thuộc 'Điểm liệt', chuẩn hóa chuỗi
+    const fatalQuestions = await Question.aggregate([
       {
         $match: {
-          category: { $regex: /^điểm liệt$/i },
+          $expr: {
+            $eq: [
+              { $trim: { input: { $toLower: "$category" } } },
+              "Điểm liệt",
+            ],
+          },
         },
       },
-      { $sample: { size: 1 } },
+      { $sample: { size: fatalCount } },
     ]);
 
-    if (fatalQuestion.length === 0) {
+
+    if (fatalQuestions.length < fatalCount) {
       return res
         .status(400)
-        .json({ error: "Không có câu hỏi thuộc 'Điểm liệt'" });
+        .json({ error: `Không đủ ${fatalCount} câu hỏi thuộc 'Điểm liệt'` });
     }
 
+    // Lấy ngẫu nhiên các câu hỏi còn lại (không phải điểm liệt)
     const normalQuestions = await Question.aggregate([
       {
         $match: {
-          category: { $not: { $regex: /^điểm liệt$/i } },
-          _id: { $nin: fatalQuestion.map((q) => q._id) },
+          $expr: {
+            $ne: [
+              { $trim: { input: { $toLower: "$category" } } },
+              "điểm liệt",
+            ],
+          },
+          _id: { $nin: fatalQuestions.map((q) => q._id) },
         },
       },
-      { $sample: { size: questionCount - 1 } },
+      { $sample: { size: questionCount - fatalCount } },
     ]);
 
-    if (normalQuestions.length < questionCount - 1) {
+    if (normalQuestions.length < questionCount - fatalCount) {
       return res
         .status(400)
         .json({ error: "Không đủ câu hỏi không thuộc 'Điểm liệt'" });
     }
 
+    // Tạo đề thi
     const exam = await Exam.create({
       title,
       category: "Tổng hợp",
-      questions: [...fatalQuestion, ...normalQuestions].map((q) => q._id),
+      questions: [...fatalQuestions, ...normalQuestions].map((q) => q._id),
       createdBy: req.user.id,
     });
 
